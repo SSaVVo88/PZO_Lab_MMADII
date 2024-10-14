@@ -1,3 +1,6 @@
 from datetime import datetime
 
-print('Current time: ', datetime.now())
+current_date = datetime.now()
+
+formated_date = current_date.strftime("%A,%d %B %Y %H:%M:%S")
+print(formated_date)
