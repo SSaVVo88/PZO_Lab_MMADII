@@ -1,4 +1,5 @@
-from datetime import datetime, date
+from datetime import datetime
 
-print('Current date: ', datetime.now().date().isoformat())
-print('xd')
+
+
+print(datetime.now().strftime("%A,%d %B %Y %H:%M:%S"))
