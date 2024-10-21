@@ -1,3 +1,5 @@
 from datetime import datetime
 
-print('Current time: ', datetime.now())
+
+
+print(datetime.now().strftime("%A,%d %B %Y %H:%M:%S"))
