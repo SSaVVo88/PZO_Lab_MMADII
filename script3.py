@@ -1,3 +1,4 @@
+"""Prints current time"""
 from datetime import date, timedelta
 
 print ("Hello World")
