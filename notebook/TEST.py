@@ -14,6 +14,10 @@
 # ---
 
 # %%
+from functools import reduce 
+
+
+# %%
 def factorial(n):
     """Computes factorial of n.
     
@@ -25,19 +29,10 @@ def factorial(n):
     if not isinstance(n, int) or n < 0:
         raise ValueError('Value of n should be nonnegative integer')
         
-    result = 1
-    for i in range(1, n+1):
-        result = result * i
-    return result
-    
+    return reduce (lambda x,y: x * y, range(1, n+1))
+                  
 
 
 # %%
-n = 5
-list(range (1, n+1))
+factorial(6)
 
-
-# %%
-factorial(7)
-
-# %%
