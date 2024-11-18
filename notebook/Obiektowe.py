@@ -1,4 +1,3 @@
-
 # ---
 # jupyter:
 #   jupytext:
@@ -16,6 +15,7 @@
 
 # %%
 import random
+import matplotlib.pyplot as plt
 
 
 # %%
@@ -23,7 +23,7 @@ class Population:
 
     def __init__(self, n=100):
          self.specimens = {Creature() for _ in range(n)}
-        
+         self.history = []
     @property
     def specimens(self):
         return self._specimens
@@ -37,17 +37,49 @@ class Population:
         # Próbujemy zabić wszystkie stwory (dla każdego odpalamy .kill)
         #for speciemen in self.specimens:
             #speciemen.kill()
-        {speciemen.kill() for specimen in self.specimens}
+        newborns = {specimen.reproduce() for specimen in self.specimens} - {None}
+        {specimen.kill() for specimen in self.specimens}
+       
+
         self.history.append(self.n)
         # Usuwamy z populacji zabite stwory 
         self.specimens = {specimen for specimen in self.specimens
-                            if specimen.alive}
-        
+                            if specimen.alive} | newborns
+
+    def plot_history(self):
+        plt.plot(self.history)
+
+    def plot_histogram(self, parameter): # parameter = 'p_death', na przykład 
+       #self.specimens to jest zbiór stworów, a każdy stwór ma swoje p_death
+       #Z każdego stwora biorę jego "śmiertelność" -> zbiór śmiertelności
+       #i ten zbiór śmiertelności wizualizuje na histogramie
+        plt.hist([getattr(specimen, parameter) for specimen in self.specimens])
+
+class Probability:
+
+    def __get__(self, obj, objtype=None): #będziemy odczytywać wartość zapisaną gdzie indziej
+        # wartość będzie zapisana w _p_death
+        return obj._p_death
+       
+
+    def __set__(self, obj, value): #tutaj chcemy pilnować właściwych wartości ( 0 <= value <= 1) 
+        if value < 0:
+            obj._p_death = 0 
+        elif value > 1:
+            obj._p_death = 1
+        else:
+            obj._p_death = value 
+            
 
 class Creature:
-    alive = True  # Atrybut
-    p_death = 0.2 
-    p_reproduce = 0.2 
+
+    sigma = 0.02 
+    p_death = Probability()
+    
+    def __init__(self, p_death=0.2, p_reproduce=0.2):
+        self.p_death = p_death
+        self.p_reproduce = p_reproduce
+        self.alive = True
 
     def kill(self): #Metoda
         if random.random() <= self.p_death:
@@ -55,19 +87,42 @@ class Creature:
 
     def reproduce(self):
         if random.random() <= self.p_reproduce and self.alive:
-            return Creature()
+            return Creature(p_death=self.p_death + random.gauss(mu=0, sigma=Creature.sigma),
+                            p_reproduce=self.p_reproduce + random.gauss(mu=0, sigma=Creature.sigma))
 
 
 # %%
-# random.random?
+population = Population()
 
 # %%
-population = Population(5)
+population.plot_histogram('p_death')
 
 # %%
-population.specimens = set()
+for _ in range(100):
+    population.natural_selection()
 
 # %%
-population.n 
+population.plot_histogram('p_death')
+
+# %%
+population.n
+
+# %%
+population.history
+
+# %%
+population.plot_histogram('p_reproduce')
+
+# %%
+population.plot_history()
+
+# %%
+stwór = Creature()
+
+# %%
+parameter = 'p_death'
+getattr(stwór1, parameter)
+
+# %%
 
 # %%
