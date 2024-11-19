@@ -38,7 +38,7 @@ class Population:
         #for speciemen in self.specimens:
             #speciemen.kill()
         newborns = {specimen.reproduce() for specimen in self.specimens} - {None}
-        {specimen.kill() for specimen in self.specimens}
+    {specimen.kill() for specimen in self.specimens}
        
 
         self.history.append(self.n)
@@ -57,24 +57,36 @@ class Population:
 
 class Probability:
 
-    def __get__(self, obj, objtype=None): #będziemy odczytywać wartość zapisaną gdzie indziej
+    def __set_name__(self, owner, name):
+        #self.public_name = name  #do wykreslenia 
+        self.private_name = '_' + name 
+
+    
+    def __get__(self, obj, objtype=None): 
+        return getattr(obj, self.private_name) #tutaj powinnia byc dowolna nazwa (np. p_reproduce) private name 
+        #będziemy odczytywać wartość zapisaną gdzie indziej
         # wartość będzie zapisana w _p_death
-        return obj._p_death
+       
        
 
     def __set__(self, obj, value): #tutaj chcemy pilnować właściwych wartości ( 0 <= value <= 1) 
-        if value < 0:
-            obj._p_death = 0 
-        elif value > 1:
-            obj._p_death = 1
-        else:
-            obj._p_death = value 
+
+      setattr(obj, self.private_name, min(1, max(0, value))) #tutaj powinnia byc dowolna nazwa (np. p_reproduce)
+        
+        #^lepsza wersja 
+        #if value < 0:
+            #obj._p_death = 0 
+        #elif value > 1:
+            #obj._p_death = 1
+        #else:
+            #obj._p_death = value 
             
 
 class Creature:
 
     sigma = 0.02 
     p_death = Probability()
+    p_reproduce = Probability()
     
     def __init__(self, p_death=0.2, p_reproduce=0.2):
         self.p_death = p_death
@@ -98,7 +110,7 @@ population = Population()
 population.plot_histogram('p_death')
 
 # %%
-for _ in range(100):
+for _ in range(50):
     population.natural_selection()
 
 # %%
@@ -115,14 +127,5 @@ population.plot_histogram('p_reproduce')
 
 # %%
 population.plot_history()
-
-# %%
-stwór = Creature()
-
-# %%
-parameter = 'p_death'
-getattr(stwór1, parameter)
-
-# %%
 
 # %%
