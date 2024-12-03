@@ -64,7 +64,7 @@ class Creature:
 
     def reproduce(self):
         if random.random() <= self.p_reproduce and self.alive:
-            return type(self)
+            return type(self)()
 
 
 class Predator(Creature):
@@ -110,10 +110,20 @@ class Prey(Creature):
 
 
 class Population:
+    ''' A population of creatures.
 
-    def __init__(self, n=100):
-         self.specimens = {Creature() for _ in range(n)}
+    Attributes:
+        creator (Creature): A class used to create creatures 
+        specimens (set): A set of Creature instances
+        
+
+        '''
+    def __init__(self, creator, n=100):
+        
+         self.creator = creator
+         self.specimens = {self.creator() for _ in range(n)}
          self.history = []
+        
     @property
     def specimens(self):
         return self._specimens
@@ -145,27 +155,45 @@ class Population:
        #i ten zbiór śmiertelności wizualizuje na histogramie
         plt.hist([getattr(specimen, parameter) for specimen in self.specimens])
 
+def hunting(prey, predators):
+    # KAzdemy elementowi ze zbioru predators.specimens musze przyporzadkowac element ze zbioru prey.specimens
+    # liczba predatorow: predators.n; liczba ofiar prey.n
+    for predator in predators.specimens:
+        predator.hungry = True
+    
+    n_pairs = min(predators.n, prey.n)
+    pairs = zip(list(predators.specimens)[:n_pairs], list(prey.specimens)[:n_pairs])
+    
+    for predator, prey in pairs:
+        predator.hunt(prey)
+    
+def simulation(prey, predators, n):
+    for _ in range (n):
+        hunting(prey, predators)
+        prey.natural_selection()
+        predators.natural_selection()
+
+def plot_history(prey, predators):
+    plt.plot(list(zip(prey.history, predators.history)))
 
 
 # %%
-predator = Predator()
+N_PREY = 300
+N_PREDATOR = 100
+
+population_prey = Population(creator=Prey, n=N_PREY)
+population_predators = Population(creator=Predator, n=N_PREDATOR)
 
 # %%
-predator.alive, predator.hungry, predator.p_death
+simulation(population_prey, population_predators, n=30)
 
 # %%
-prey = Prey()
+plot_history(population_prey, population_predators)
 
 # %%
-prey.alive, prey.p_hunt
+population_prey.plot_history()
 
 # %%
-predator.hungry = True
-predator.hunt(prey)
-prey.alive, predator.hungry
-
-# %%
-
-# %%
+population_predator.plot_history()
 
 # %%
