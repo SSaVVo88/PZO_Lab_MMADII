@@ -4,6 +4,6 @@ stages:
     deps:
     - src/config.py
     - src/download.py
-    - src/utils/py
+    - src/utils.py
     outs:
     - data/iris.csv
