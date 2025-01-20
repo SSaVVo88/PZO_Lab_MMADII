@@ -7,3 +7,16 @@ stages:
     - src/utils.py
     outs:
     - data/iris.csv
+
+  plots:
+    cmd: python src/download.py
+    deps:
+    - src/config.py
+    - src/download.py
+    - src/utils.py
+    - data/iris.csv
+    outs:
+    - plots/matrix_plot.png
+plots:
+- plots/matrix_plot.png
+
