@@ -1,0 +1,22 @@
+schema: '2.0'
+stages:
+  download:
+    cmd: python src/download.py
+    deps:
+    - path: src/config.py
+      hash: md5
+      md5: cce29da8813475439e2243853002b787
+      size: 223
+    - path: src/download.py
+      hash: md5
+      md5: 24869299ae3da687c7d064c5c6acfb5a
+      size: 535
+    - path: src/utils.py
+      hash: md5
+      md5: 0e3cb3ae41782831a1f8ef33aaec7fb5
+      size: 394
+    outs:
+    - path: data/iris.csv
+      hash: md5
+      md5: 500a0acbd112b7c512929eac892f9864
+      size: 4009
